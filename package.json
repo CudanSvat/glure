@@ -1,0 +1,24 @@
+{
+  "name": "glure",
+  "version": "1.0.0",
+  "description": "Glure – pošteni klesar. Komična faux-3D igra slaganja kamena.",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "start": "serve -s dist"
+  },
+  "dependencies": {
+    "@fontsource/cinzel": "^5.3.0",
+    "serve": "^14.2.8"
+  },
+  "devDependencies": {
+    "typescript": "^7.0.2",
+    "vite": "^8.3.8"
+  }
+}

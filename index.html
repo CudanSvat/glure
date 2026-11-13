@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="hr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Glure – pošteni klesar</title>
+    <meta
+      name="description"
+      content="Glure je klesar koji ne zna lagati. Složi suhozid, preživi marendu i ispostavi pošten račun. Komična igra slaganja kamena."
+    />
+    <meta name="theme-color" content="#2f84b8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  </head>
+  <body>
+    <div id="app">
+      <canvas id="scene" aria-label="Scena igre"></canvas>
+
+      <header id="hud" class="hidden">
+        <div class="hud-job">
+          <span id="hud-no">Posao 1.</span>
+          <strong id="hud-title"></strong>
+        </div>
+        <div class="hud-clock">
+          <b id="hud-time">07:00</b>
+          <div class="daybar"><i id="hud-day"></i></div>
+          <small id="hud-end">fajrunt u 15:00</small>
+        </div>
+        <div class="hud-meter">
+          <label>Kvaliteta zida</label>
+          <div class="bar"><i id="hud-q" class="good"></i></div>
+          <b id="hud-qv">100 %</b>
+        </div>
+        <button id="hud-honesty" class="hud-honesty" type="button" title="Poštenje">
+          <label>Poštenje</label>
+          <b>100 %</b>
+        </button>
+        <div class="hud-meter narrow">
+          <label>Sazidano</label>
+          <b id="hud-prog">0 %</b>
+        </div>
+        <div class="hud-btns">
+          <button id="btn-help" type="button" title="Kako se igra (H)">Pomoć</button>
+          <button id="btn-sound" type="button" title="Zvuk (M)">Zvuk: da</button>
+        </div>
+      </header>
+
+      <div id="hint" class="hidden"><b>Glure:</b> <span id="hint-text"></span></div>
+
+      <section id="hand" class="hidden" aria-label="Gomila kamenja">
+        <div class="hand-label">Gomila</div>
+        <div id="cards"></div>
+        <div class="hand-actions">
+          <button id="btn-tap" type="button"><kbd>K</kbd><span>Kucni</span><small>5 min</small></button>
+          <button id="btn-scrap" type="button"><kbd>X</kbd><span>Odbaci</span><small>5 min</small></button>
+        </div>
+      </section>
+
+      <section id="dialogue" class="hidden" aria-live="polite">
+        <canvas id="dlg-portrait" width="220" height="220"></canvas>
+        <div class="dlg-body">
+          <div id="dlg-name"></div>
+          <p id="dlg-text"><span id="dlg-shown"></span><span id="dlg-rest"></span></p>
+          <div id="dlg-choices"></div>
+        </div>
+        <div id="dlg-next" aria-hidden="true"></div>
+      </section>
+
+      <section id="title">
+        <div class="title-stage">
+          <h1 class="logo" aria-label="Glure">
+            <span>G</span><span>L</span><span>U</span><span>R</span><span>E</span>
+          </h1>
+          <p class="subtitle">Pošteni klesar</p>
+          <p class="tagline">Kamen ne laže. Glure isto.</p>
+          <div class="title-btns">
+            <button id="btn-start" class="stone-btn primary" type="button">Na posao!</button>
+            <button id="btn-howto" class="stone-btn" type="button">Kako se igra</button>
+            <button id="btn-sound-title" class="stone-btn quiet" type="button">Zvuk: uključen</button>
+          </div>
+          <p class="title-foot">Igra o suhozidu, marendi i tvrdoglavom poštenju.</p>
+          <p class="rotate-tip">Zakreni mobitel vodoravno – zid je dug.</p>
+        </div>
+      </section>
+
+      <section id="howto" class="overlay hidden">
+        <div class="tablet">
+          <h2>Kako se igra</h2>
+          <ul>
+            <li><b>Cilj:</b> složi zid do konopa, kamen po kamen.</li>
+            <li>
+              <b>Odaberi kamen</b> s gomile (klik ili tipke <kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd>), namjesti ga mišem
+              ili strelicama i <b>klikni na zid</b> (ili <kbd>razmaknica</kbd>).
+            </li>
+            <li>
+              <b>Fuga na fugu ne ide!</b> Svaki kamen mora preklopiti spoj ispod sebe. Zeleni obris je dobar,
+              narančasti znači grešku.
+            </li>
+            <li><b>Ne ostavljaj rupe.</b> Kamen pada ravno dolje i ostaje gdje sjedne.</li>
+            <li><b>Kucni</b> (<kbd>K</kbd>) kamen čekićem: zdrav zvoni, šupalj tupo jekne.</li>
+            <li><b>Odbaci</b> (<kbd>X</kbd>) škart ili kamen koji ti ne paše. Glure škart ne ugrađuje.</li>
+            <li><b>Nadvoj:</b> nad vrata ide jedan kamen od 4 pedlja koji s obje strane leži na zidu.</li>
+            <li><b>Sat teče:</b> svaki kamen je 10 minuta. U fajrunt se staje, gotovo ili ne.</li>
+            <li><b>Poštenje</b> je uvijek 100 %. Smiješ pokušati slagati. Sretno.</li>
+          </ul>
+          <button id="howto-close" class="stone-btn primary" type="button">Jasno</button>
+        </div>
+      </section>
+
+      <section id="bill" class="overlay hidden">
+        <div class="paper">
+          <div class="paper-head">
+            <h2>Račun</h2>
+            <span id="bill-no">br. 001</span>
+          </div>
+          <p class="paper-sub">Glure, klesarski i zidarski obrt · „Kamen ne laže“</p>
+          <p id="bill-job"></p>
+          <table>
+            <tbody id="bill-rows"></tbody>
+          </table>
+          <div id="bill-foot">
+            <div class="bill-total"><span>Ukupno za platiti</span><b id="bill-total"></b></div>
+            <div class="bill-quality">
+              <span>Kvaliteta zida</span>
+              <span id="bill-stars"></span>
+              <b id="bill-q"></b>
+            </div>
+            <p id="bill-quote"></p>
+            <button id="bill-next" class="stone-btn primary" type="button">Dalje</button>
+          </div>
+          <div class="stamp" id="bill-stamp">Pošteno<small>Glure, klesar</small></div>
+        </div>
+      </section>
+
+      <section id="finale" class="overlay hidden">
+        <div class="tablet">
+          <p class="tablet-over">Kraj radnog tjedna</p>
+          <h2 id="fin-rank"></h2>
+          <p id="fin-rank-text"></p>
+          <dl id="fin-stats"></dl>
+          <p class="fin-quote">„Kamen po kamen – palača. Laž po laž – apartman.“</p>
+          <button id="fin-again" class="stone-btn primary" type="button">Igraj ponovno</button>
+        </div>
+      </section>
+
+      <div id="banner" class="hidden">
+        <span id="banner-no"></span>
+        <strong id="banner-title"></strong>
+        <small id="banner-place"></small>
+      </div>
+
+      <div id="fade"></div>
+    </div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
